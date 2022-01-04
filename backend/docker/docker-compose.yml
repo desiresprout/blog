@@ -1,0 +1,35 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+networks:
+  newboom-network:
+    driver: bridge
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      # TZ: Asia/Seoul
+      # TZ: UTC
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db:/var/lib/mysql
+    ports:
+      - 3307:3306
+
+    networks:
+      - shopping-network
+
+  # app:
+  #   build:
+  #     context: ../../
+  #   # image: node:14-alpine
+  #   stdin_open: true
+  #   tty: true
+  #   ports:
+  #     - "4000:4000"
+
+  #   networks:
+  #     - newboom-network
