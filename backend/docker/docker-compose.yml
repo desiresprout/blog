@@ -2,7 +2,7 @@
 version: '3.1'
 
 networks:
-  newboom-network:
+  shopping-network:
     driver: bridge
 
 services:
@@ -17,19 +17,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db:/var/lib/mysql
     ports:
-      - 3307:3306
+      - 6000:3306
 
     networks:
       - shopping-network
-
-  # app:
-  #   build:
-  #     context: ../../
-  #   # image: node:14-alpine
-  #   stdin_open: true
-  #   tty: true
-  #   ports:
-  #     - "4000:4000"
-
-  #   networks:
-  #     - newboom-network
