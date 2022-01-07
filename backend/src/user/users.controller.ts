@@ -32,9 +32,11 @@ export class UsersController {
   // @UseGuards(NotLoggedInGuard)
   @Post()
   async join(@Body() data: JoinRequestDto) {
-    console.log('join');
+    console.log('data', data);
     try {
       const user = await this.usersService.join(data.email, data.password);
+      console.log('user', user);
+      return user;
     } catch (e) {
       console.log(e);
     }

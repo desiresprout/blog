@@ -3,6 +3,26 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+  constructor() {
+    super({
+      // datasources:{
+      //   db:{
+      //     url: ""
+      //   }
+      // }
+      log: [
+        { emit: 'stdout', level: 'query' },
+        { emit: 'stdout', level: 'info' },
+        { emit: 'stdout', level: 'warn' },
+        { emit: 'stdout', level: 'error' },
+      ],
+      errorFormat: 'pretty',
+    });
+    // this.$on('query',(e)=>{
+
+    // })
+  }
+
   async onModuleInit() {
     await this.$connect();
   }

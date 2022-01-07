@@ -3,8 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import { User } from '@prisma/client';
 
 //   import bcrypt from 'bcrypt';
 
@@ -13,11 +13,9 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async join(email: string, password: string): Promise<User | null> {
-    const user = this.prisma.user.findUnique({
+    return this.prisma.user.findFirst({
       where: { email },
     });
-
-    // const user = this.prisma.user.findMany();
 
     // const queryRunner = this.connection.createQueryRunner();
     // await queryRunner.connect();
@@ -29,12 +27,12 @@ export class UsersService {
     //   throw new ForbiddenException('이미 존재하는 사용자입니다');
     // }
     // const hashedPassword = await bcrypt.hash(password, 12);
-    try {
-      return user || null;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    } finally {
-    }
+    // try {
+    //   return user || null;
+    // } catch (error) {
+    //   console.error(error);
+    //   throw error;
+    // } finally {
+    // }
   }
 }

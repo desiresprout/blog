@@ -1,0 +1,14 @@
+model Comment {
+  id Int     @default(autoincrement()) @id
+  postId Int
+  comment String
+  depth Int 
+  order Int
+  groupNumber Int
+  post Post @relation(fields: [postId], references: [id])
+
+}
+
+
+  // @@index([id])
+
