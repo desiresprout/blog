@@ -6,29 +6,37 @@ model Category {
 }
 model Comment {
   id Int     @default(autoincrement()) @id
-  postId Int
   comment String
-  depth Int 
-  order Int
-  groupNumber Int
+  depth Int @default(0) 
+  is_private Boolean @default(false)
+  deleted Boolean @default(false)
+  created_at DateTime @default(now())
+  postId Int
   post Post @relation(fields: [postId], references: [id])
-
 }
 
 
-  // @@index([id])
-
+// @@index([id])
+// depth 0은 댓글 1은 대댓글
 model Post {
   id    Int     @default(autoincrement()) @id
-  name String  @unique
-  displayName String
+  title String
+  body String 
+  created_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+  is_private Boolean @default(false)
   comments Comment[]
   categories Category[]
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([created_at])
 }
 model User {
   id    Int     @default(autoincrement()) @id
   email String  @unique
   password  String
+  posts Post[]
 }
 datasource db {
   provider = "mysql"

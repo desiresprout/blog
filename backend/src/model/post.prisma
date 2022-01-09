@@ -1,7 +1,14 @@
 model Post {
   id    Int     @default(autoincrement()) @id
-  name String  @unique
-  displayName String
+  title String
+  body String 
+  created_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+  is_private Boolean @default(false)
   comments Comment[]
   categories Category[]
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([created_at])
 }

@@ -1,14 +1,14 @@
 model Comment {
   id Int     @default(autoincrement()) @id
-  postId Int
   comment String
-  depth Int 
-  order Int
-  groupNumber Int
+  depth Int @default(0) 
+  is_private Boolean @default(false)
+  is_deleted Boolean @default(false)
+  created_at DateTime @default(now())
+  postId Int
   post Post @relation(fields: [postId], references: [id])
-
 }
 
 
-  // @@index([id])
-
+// @@index([id])
+// depth 0은 댓글 1은 대댓글

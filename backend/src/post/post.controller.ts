@@ -13,33 +13,25 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 // import { LocalAuthGuard } from '../auth/local-auth.guard';
 //   import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
 //   import { LoggedInGuard } from '../auth/logged-in.guard';
-import { JoinRequestDto } from './dto/join.request.dto';
-import { UsersService } from './users.service';
+import { PostsRequestDto } from './dto/join.request.dto';
+import { PostService } from './post.service';
 
-@ApiTags('유저')
-@Controller('users')
-export class UsersController {
-  constructor(private usersService: UsersService) {}
+@ApiTags('포스트')
+@Controller('')
+export class PostController {
+  constructor(private PostService: PostService) {}
 
-  //   @ApiOperation({ summary: '로그인' })
-  // //   @UseGuards(LocalAuthGuard)
-  //   @Post('login')
-  //   async login(@User() user: Users) {
-  //     return user;
-  //   }
+  @ApiOperation({ summary: '포스트들' })
+  @Get('posts')
+  async posts(@Body() data: PostsRequestDto) {
+    const posts = await this.PostService.getPosts(data.userID);
 
-  @ApiOperation({ summary: '회원가입1' })
-  // @UseGuards(NotLoggedInGuard)
-  @Post()
-  async join(@Body() data: JoinRequestDto) {
-    console.log('data', data);
-    try {
-      const user = await this.usersService.join(data.email, data.password);
-      console.log('user', user);
-      return user;
-    } catch (e) {
-      console.log(e);
+    if (!posts) {
+      throw new NotFoundException();
     }
+
+    return posts;
+
     // if (!user) {
     //   throw new NotFoundException();
     // }

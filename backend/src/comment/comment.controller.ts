@@ -14,12 +14,12 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 //   import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
 //   import { LoggedInGuard } from '../auth/logged-in.guard';
 import { JoinRequestDto } from './dto/join.request.dto';
-import { UsersService } from './users.service';
+import { CommentService } from './comment.service';
 
-@ApiTags('유저')
-@Controller('users')
-export class UsersController {
-  constructor(private usersService: UsersService) {}
+@ApiTags('USERS')
+@Controller('api/users')
+export class CommentController {
+  constructor(private CommentService: CommentService) {}
 
   //   @ApiOperation({ summary: '로그인' })
   // //   @UseGuards(LocalAuthGuard)
@@ -28,18 +28,10 @@ export class UsersController {
   //     return user;
   //   }
 
-  @ApiOperation({ summary: '회원가입1' })
+  @ApiOperation({ summary: '회원가입' })
   // @UseGuards(NotLoggedInGuard)
   @Post()
   async join(@Body() data: JoinRequestDto) {
-    console.log('data', data);
-    try {
-      const user = await this.usersService.join(data.email, data.password);
-      console.log('user', user);
-      return user;
-    } catch (e) {
-      console.log(e);
-    }
     // if (!user) {
     //   throw new NotFoundException();
     // }
