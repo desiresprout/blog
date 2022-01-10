@@ -5,7 +5,6 @@ function modelSerializer<J, C>(plain: J | J[], serializer: ClassConstructor<C>) 
     excludeExtraneousValues: false,
     enableCircularCheck: false,
   });
-  console.log('modelInstance', modelInstance);
   return instanceToPlain(modelInstance);
 }
 

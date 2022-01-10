@@ -12,6 +12,11 @@ export class PostSerializer {
   @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm:ss'), { toClassOnly: true })
   created_at: String;
 
+  @Expose({ name: 'commentsCount' })
+  getCommentsCount() {
+    return this['_count']?.comments;
+  }
+
   @Type(() => UserSerializer)
   user: UserSerializer;
 }
