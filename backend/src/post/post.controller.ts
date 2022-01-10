@@ -15,6 +15,9 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 //   import { LoggedInGuard } from '../auth/logged-in.guard';
 import { PostsRequestDto } from './dto/join.request.dto';
 import { PostService } from './post.service';
+import { PostSerializer } from '../serializers/post.serializer';
+// import { UserSerializer } from '../serializers/user.serializer';
+import modelSerializer from '../serializers/model.serializer';
 
 @ApiTags('포스트')
 @Controller('')
@@ -26,11 +29,25 @@ export class PostController {
   async posts(@Body() data: PostsRequestDto) {
     const posts = await this.PostService.getPosts(data.userID);
 
+    // const list = posts.reduce((acc, cur) => {
+    //   if (cur.user.id) {
+    //     acc.push(cur.user);
+    //     return acc;
+    //   }
+    //   return;
+    // }, []);
+
+    // // console.log('list', list);
+
+    const postSerialized = modelSerializer(posts, PostSerializer);
+
+    console.log('postSerialized', postSerialized[0]);
+
     if (!posts) {
       throw new NotFoundException();
     }
 
-    return posts;
+    return postSerialized;
 
     // if (!user) {
     //   throw new NotFoundException();

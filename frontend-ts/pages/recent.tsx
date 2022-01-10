@@ -60,7 +60,7 @@ const Recent = () => {
       <div>포스트 제목 : {v.title}</div>
       <div>포스트 내용 : {v.body}</div>
       <div>댓글 갯수 : {v.commentsCount}</div>
-      <div>날짜 {dayjs(v.created_at).format('YYYY-MM-DD HH:mm:ss')}</div>
+      <div>날짜 {v.created_at}</div>
     </div>
   ));
 };

@@ -17,10 +17,10 @@ export class PostService {
       },
       include: {
         user: {
-          select: {
-            email: true,
-            password: false,
-          },
+          // select: {
+          //   email: true,
+          //   password: false,
+          // },
         },
         _count: {
           select: {
@@ -41,7 +41,7 @@ export class PostService {
     return posts?.map((post) => {
       return {
         ...post,
-        commentsCount: post._count.comments,
+        // commentsCount: post._count.comments,
       };
     });
 
