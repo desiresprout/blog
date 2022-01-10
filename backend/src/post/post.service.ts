@@ -16,7 +16,17 @@ export class PostService {
         is_private: false,
       },
       include: {
-        comments: true,
+        user: {
+          select: {
+            email: true,
+            password: false,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
       },
       take: 20,
       orderBy: {
@@ -24,14 +34,18 @@ export class PostService {
       },
     });
 
-    const postsInCount = posts.map((post) => {
+    // console.log('posts', posts);
+
+    // return posts;
+
+    return posts?.map((post) => {
       return {
         ...post,
-        commentsCount: post.comments.length,
+        commentsCount: post._count.comments,
       };
     });
 
-    return postsInCount;
+    // return postsInCount;
 
     // return this.prisma.post.findMany({
     //   where

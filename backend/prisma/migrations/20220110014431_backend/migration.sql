@@ -14,7 +14,7 @@ CREATE TABLE `Comment` (
     `comment` VARCHAR(191) NOT NULL,
     `depth` INTEGER NOT NULL DEFAULT 0,
     `is_private` BOOLEAN NOT NULL DEFAULT false,
-    `deleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `postId` INTEGER NOT NULL,
 

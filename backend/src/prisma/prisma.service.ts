@@ -1,7 +1,9 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import debug from 'debug';
 
-@Injectable()
+const queryDebug = debug('debug:query');
+
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor() {
     super({
@@ -18,13 +20,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       ],
       errorFormat: 'pretty',
     });
-    // this.$on('query',(e)=>{
-
-    // })
   }
 
   async onModuleInit() {
     await this.$connect();
+    this.$use(async (params, next) => {
+      const before = Date.now();
+      const result = await next(params);
+      const after = Date.now();
+      const queryLog = `Query ${params.model}.${params.action} took ${after - before}ms`;
+      queryDebug('queryLog', queryLog);
+      return result;
+    });
   }
 
   async enableShutdownHooks(app: INestApplication) {

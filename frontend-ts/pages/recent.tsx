@@ -12,6 +12,12 @@ interface IPosts {
   body: string;
   created_at: string;
   comments: IComment[];
+  commentsCount: number;
+  user: IUser;
+}
+
+interface IUser {
+  email: string;
 }
 
 interface IComment {
@@ -34,6 +40,10 @@ const Recent = () => {
 
   console.log('data', data);
 
+  useEffect(() => {
+    console.log('mount');
+  }, []);
+
   return data?.map((v) => (
     <div
       css={css`
@@ -45,9 +55,11 @@ const Recent = () => {
         border: 1px solid bisque;
       `}
     >
+      <div>유저 이메일 : {v.user.email}</div>
       <div>포스트 ID : {v.id}</div>
-      <div>{v.title}</div>
-      <div>{v.body}</div>
+      <div>포스트 제목 : {v.title}</div>
+      <div>포스트 내용 : {v.body}</div>
+      <div>댓글 갯수 : {v.commentsCount}</div>
       <div>날짜 {dayjs(v.created_at).format('YYYY-MM-DD HH:mm:ss')}</div>
     </div>
   ));

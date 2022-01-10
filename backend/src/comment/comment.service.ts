@@ -10,7 +10,12 @@ export class CommentService {
 
   async getCommentCount(postID: number): Promise<number | 0> {
     return this.prisma.comment.count({
-      where: { postId: postID },
+      // where: { postId: postID },
+      where: {
+        postId: {
+          in: [postID],
+        },
+      },
     });
 
     // const queryRunner = this.connection.createQueryRunner();

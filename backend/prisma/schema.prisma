@@ -9,7 +9,7 @@ model Comment {
   comment String
   depth Int @default(0) 
   is_private Boolean @default(false)
-  deleted Boolean @default(false)
+  is_deleted Boolean @default(false)
   created_at DateTime @default(now())
   postId Int
   post Post @relation(fields: [postId], references: [id])
