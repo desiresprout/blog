@@ -1,15 +1,22 @@
 import { GetStaticPropsContext } from 'next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { css } from '@emotion/react';
-import { useQuery, QueryClient, dehydrate } from 'react-query';
+import {
+  useQuery,
+  QueryClient,
+  dehydrate,
+  useInfiniteQuery,
+} from 'react-query';
 import { useRouter } from 'next/router';
 import ky from 'ky';
-import dayjs from 'dayjs';
 
 interface IPosts {
+  key: string;
   id: number;
   title: string;
   body: string;
+  isDeleted: string;
+  isPrivate: boolean;
   created_at: string;
   comments: IComment[];
   commentsCount: number;
@@ -26,26 +33,62 @@ interface IComment {
   created_at: string;
 }
 
-function loadPosts(): Promise<IPosts[]> {
-  return ky.get('http://localhost:4000/posts').json();
+function loadPosts(userID?: string): Promise<IPosts[]> {
+  return ky.get(`http://localhost:4000/posts?cursor=${userID}`).json();
 }
 
+const baseOption = {
+  root: null,
+  threshold: 0.5,
+  rootMargin: '0px',
+};
+const useIntersect = (onIntersect: any, option: any) => {
+  const [ref, setRef] = useState<HTMLElement | null | undefined>(null);
+  const checkIntersect = useCallback(([entry], observer) => {
+    if (entry.isIntersecting) {
+      onIntersect(entry, observer);
+    }
+  }, []);
+  useEffect(() => {
+    let observer: IntersectionObserver;
+    if (ref) {
+      observer = new IntersectionObserver(checkIntersect, {
+        ...baseOption,
+        ...option,
+      });
+      observer.observe(ref);
+    }
+    return () => observer && observer.disconnect();
+  }, [ref, option.root, option.threshold, option.rootMargin, checkIntersect]);
+  return [setRef];
+};
+
 const Recent = () => {
-  const [isMount, setMount] = useState(false);
-  const router = useRouter();
-  const { userID } = router.query;
-  const { isFetching, data } = useQuery<IPosts[]>('recentPosts', () =>
-    loadPosts(),
+  const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPosts[]>(
+    'recentPosts',
+    ({ pageParam = 0 }) => {
+      return loadPosts(pageParam);
+    },
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage?.[lastPage.length - 1]?.id;
+        // return lastPage?.[0]?.id;
+      },
+    },
   );
 
-  console.log('data', data);
+  const [setRef] = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    await fetchNextPage();
+    observer.observe(entry.target);
+  }, {});
 
-  useEffect(() => {
-    console.log('mount');
-  }, []);
+  const recentPosts = data?.pages?.flat() || [];
 
-  return data?.map((v) => (
+  return recentPosts?.map((v) => (
     <div
+      key={v.key}
+      ref={setRef}
       css={css`
         display: flex;
         flex-direction: column;
@@ -61,6 +104,8 @@ const Recent = () => {
       <div>포스트 내용 : {v.body}</div>
       <div>댓글 갯수 : {v.commentsCount}</div>
       <div>날짜 {v.created_at}</div>
+      <div>삭제여부 : {v.isDeleted ? '삭제' : '미삭제'}</div>
+      <div>Private여부 : {v.isPrivate ? '비공개' : '공개'}</div>
     </div>
   ));
 };
@@ -76,7 +121,7 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   //     },
   //   };
   // }
-  await queryClient.prefetchQuery('recentPosts', () => loadPosts());
+  // await queryClient.prefetchQuery('recentPosts', () => loadPosts());
 
   return {
     props: {

@@ -3,7 +3,6 @@ import { instanceToPlain, plainToInstance, type ClassConstructor } from 'class-t
 function modelSerializer<J, C>(plain: J | J[], serializer: ClassConstructor<C>) {
   const modelInstance = plainToInstance(serializer, plain, {
     excludeExtraneousValues: false,
-    enableCircularCheck: false,
   });
   return instanceToPlain(modelInstance);
 }

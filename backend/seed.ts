@@ -15,13 +15,13 @@ const currentDayjs = dayjs();
 
 let o = 0;
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < loop; i++) {
   const data: any = {
     title: faker.name.title(),
     body: faker.name.jobDescriptor(),
     userId: 1,
-    is_private: 0,
-    is_deleted: 0,
+    is_private: false,
+    is_deleted: false,
     // is_private: !!faker.datatype.number({ min: 0, max: 1 }),
     // is_deleted: !!faker.datatype.number({ min: 0, max: 1 }),
     created_at: new Date(currentDayjs.add(o, 'minute').format(dateFormat)),
@@ -58,14 +58,14 @@ async function main() {
   //   ],
   //   skipDuplicates: false,
   // });
-  // await prisma.post.createMany({
-  //   data: postData as any,
-  //   skipDuplicates: false,
-  // });
-  await prisma.comment.createMany({
-    data: commentData,
+  await prisma.post.createMany({
+    data: postData as any,
     skipDuplicates: false,
   });
+  // await prisma.comment.createMany({
+  //   data: commentData,
+  //   skipDuplicates: false,
+  // });
 
   console.log(`Seeding finished.`);
 }
