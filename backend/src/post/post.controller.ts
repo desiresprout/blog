@@ -8,12 +8,12 @@ import modelSerializer from '../serializers/model.serializer';
 @ApiTags('포스트')
 @Controller('')
 export class PostController {
-  constructor(private PostService: PostService) {}
+  constructor(private postService: PostService) {}
 
   @ApiOperation({ summary: '포스트들' })
   @Get('posts')
-  async posts(@Query('cursor') cursor?: any) {
-    const posts = await this.PostService.getPosts(cursor);
+  async posts(@Query('cursor') cursor: string, @Query('userID') userID?: string) {
+    const posts = await this.postService.getPosts(cursor, userID);
 
     const postSerialized = modelSerializer(posts, PostSerializer);
 

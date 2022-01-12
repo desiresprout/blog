@@ -5,17 +5,14 @@ import { Post, Comment } from '@prisma/client';
 @Injectable()
 export class PostService {
   constructor(private readonly prisma: PrismaService) {}
-  async getPosts(cursor?: number) {
-    /* userID가 있으면 유저별 최신 포스트 리스트
-      없으면 recent 포스트 리스트
-    */
-
+  async getPosts(cursor: string, userID: string) {
     return await this.prisma.post.findMany({
       where: {
         is_deleted: false,
         is_private: false,
+        userId: userID > '0' ? Number(userID) : undefined,
       },
-      cursor: cursor > 0 ? { id: Number(cursor) - 1 } : undefined,
+      cursor: cursor > '0' ? { id: Number(cursor) - 1 } : undefined,
       include: {
         user: true,
         _count: {
