@@ -1,78 +1,23 @@
 import { GetStaticPropsContext } from 'next';
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { css } from '@emotion/react';
-import {
-  useQuery,
-  QueryClient,
-  dehydrate,
-  useInfiniteQuery,
-} from 'react-query';
-import { useRouter } from 'next/router';
-import ky from 'ky';
-
-interface IPosts {
-  key: string;
-  id: number;
-  title: string;
-  body: string;
-  isDeleted: string;
-  isPrivate: boolean;
-  created_at: string;
-  comments: IComment[];
-  commentsCount: number;
-  user: IUser;
-}
-
-interface IUser {
-  email: string;
-}
-
-interface IComment {
-  id: number;
-  comment: string;
-  created_at: string;
-}
-
-function loadPosts(userID?: string): Promise<IPosts[]> {
-  return ky.get(`http://localhost:4000/posts?cursor=${userID}`).json();
-}
-
-const baseOption = {
-  root: null,
-  threshold: 0.5,
-  rootMargin: '0px',
-};
-const useIntersect = (onIntersect: any, option: any) => {
-  const [ref, setRef] = useState<HTMLElement | null | undefined>(null);
-  const checkIntersect = useCallback(([entry], observer) => {
-    if (entry.isIntersecting) {
-      onIntersect(entry, observer);
-    }
-  }, []);
-  useEffect(() => {
-    let observer: IntersectionObserver;
-    if (ref) {
-      observer = new IntersectionObserver(checkIntersect, {
-        ...baseOption,
-        ...option,
-      });
-      observer.observe(ref);
-    }
-    return () => observer && observer.disconnect();
-  }, [ref, option.root, option.threshold, option.rootMargin, checkIntersect]);
-  return [setRef];
-};
+import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
+import { loadPosts } from './api/posts';
+import { HTTPError } from 'ky';
+import { useIntersect } from '../hooks/useIntersect';
+import IPost from '../types/interface/post';
 
 const Recent = () => {
-  const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPosts[]>(
+  const { data, isLoading, fetchNextPage } = useInfiniteQuery<
+    IPost[],
+    HTTPError
+  >(
     'recentPosts',
-    ({ pageParam = 0 }) => {
+    ({ pageParam = '0' }) => {
       return loadPosts(pageParam);
     },
     {
       getNextPageParam: (lastPage) => {
         return lastPage?.[lastPage.length - 1]?.id;
-        // return lastPage?.[0]?.id;
       },
     },
   );
@@ -85,7 +30,11 @@ const Recent = () => {
 
   const recentPosts = data?.pages?.flat() || [];
 
-  return recentPosts?.map((v) => (
+  if (isLoading) {
+    return <div>로딩 중......</div>;
+  }
+
+  return recentPosts.map((v) => (
     <div
       key={v.key}
       ref={setRef}
@@ -99,6 +48,7 @@ const Recent = () => {
       `}
     >
       <div>유저 이메일 : {v.user.email}</div>
+      <div>유저 ID : {v.user.id}</div>
       <div>포스트 ID : {v.id}</div>
       <div>포스트 제목 : {v.title}</div>
       <div>포스트 내용 : {v.body}</div>
@@ -112,16 +62,8 @@ const Recent = () => {
 
 export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const queryClient = new QueryClient();
-  const userID = context.params?.userID as string;
-  // if (!userID) {
-  //   return {
-  //     redirect: {
-  //       destination: '/', // 유저아이디 없으면 path /로
-  //       permanent: false, // http status 300 Permanent Redirect
-  //     },
-  //   };
-  // }
-  // await queryClient.prefetchQuery('recentPosts', () => loadPosts());
+
+  await queryClient.prefetchQuery('recentPosts', () => loadPosts('0'));
 
   return {
     props: {
