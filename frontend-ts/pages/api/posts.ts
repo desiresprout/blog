@@ -6,6 +6,6 @@ export function loadPosts(cursor: string, userID?: string) {
     .json();
 }
 
-export function loadPost(userID: string) {
-  return ky.get(`http://localhost:4000/posts?userID=${userID}`).json();
+export function loadPost(postID: string) {
+  return ky.get(`http://localhost:4000/post?postID=${postID}`).json();
 }

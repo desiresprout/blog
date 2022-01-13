@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { GetStaticPropsContext } from 'next';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { css } from '@emotion/react';
@@ -9,41 +10,39 @@ import IPost from '../../types/interface/post';
 
 const UserPosts = () => {
   const router = useRouter();
-  const { id: userID } = router.query;
+  const { id: postID } = router.query;
 
-  //   const { data } = useQuery<IPosts>(['loadPost', userID], () =>
-  //     loadPost(userID)));
-
-  //   const { data: singlePost } = useQuery<IPost>(['loadPost'], () =>
-  //     loadPost(userID),
-  //   );
-
-  const { data: singlePost } = useQuery<IPost>('loadPost', () =>
-    loadPost(userID),
+  const { data: singlePost } = useQuery<IPost>(['loadPost', postID], () =>
+    loadPost(postID),
   );
 
-  //   const userPosts = data?.pages?.flat() || [];
+  console.log('singlePost', singlePost);
 
-  //   console.log('data', data);
-
-  //   console.log('userPosts', userPosts);
-  return <div>hi</div>;
+  return singlePost!.map((post) => (
+    <Fragment>
+      <div>포스트 ID : {post.id}</div>
+      <div>포스트 내용 : {post.body}</div>
+      <div>포스트 작성날짜 : {post.created_at}</div>
+      <div>작성자 : {post.user.id}</div>
+      <div>댓글 갯수 : {post.commentsCount}</div>
+    </Fragment>
+  ));
 };
 
 export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const queryClient = new QueryClient();
-  const userID = context.params?.id as string;
+  const postID = context.params?.id as string;
 
-  if (!userID) {
+  if (!postID) {
     return {
       redirect: {
-        destination: '/recent', // 유저아이디 없으면 path /로
-        permanent: false, // http status 300 Permanent Redirect
+        destination: '/recent',
+        permanent: false,
       },
     };
   }
 
-  await queryClient.prefetchQuery(['loadPost', userID], () => loadPost(userID));
+  await queryClient.prefetchQuery(['loadPost', postID], () => loadPost(postID));
 
   return {
     props: {
