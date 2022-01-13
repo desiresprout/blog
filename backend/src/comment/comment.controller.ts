@@ -1,58 +1,23 @@
-import {
-  Request,
-  Body,
-  Controller,
-  NotFoundException,
-  Post,
-  UseGuards,
-  Get,
-  Response,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Query, Controller, Get, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-// import { LocalAuthGuard } from '../auth/local-auth.guard';
-//   import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
-//   import { LoggedInGuard } from '../auth/logged-in.guard';
-import { JoinRequestDto } from './dto/join.request.dto';
 import { CommentService } from './comment.service';
 
-@ApiTags('USERS')
-@Controller('api/users')
+@ApiTags('COMMENT')
+@Controller('api/comments')
 export class CommentController {
-  constructor(private CommentService: CommentService) {}
+  constructor(private commentService: CommentService) {}
 
-  //   @ApiOperation({ summary: '로그인' })
-  // //   @UseGuards(LocalAuthGuard)
-  //   @Post('login')
-  //   async login(@User() user: Users) {
-  //     return user;
-  //   }
-
-  @ApiOperation({ summary: '회원가입' })
-  // @UseGuards(NotLoggedInGuard)
-  @Post()
-  async join(@Body() data: JoinRequestDto) {
-    // if (!user) {
-    //   throw new NotFoundException();
-    // }
-    // const result = await this.usersService.join(
-    //   data.email,
-    //   data.nickname,
-    //   data.password
-    // );
-    // if (result) {
-    //   return 'ok';
-    // } else {
-    //   throw new ForbiddenException();
-    // }
+  @ApiOperation({ summary: '댓글' })
+  @Get()
+  async getComments(@Query('postID') postID: string, @Query('cursor') cursor?: string) {
+    if (postID || !cursor) {
+      throw new ForbiddenException();
+    }
+    const comments = await this.commentService.getComments(postID, cursor);
+    if (comments) {
+      return comments;
+    } else {
+      throw new NotFoundException();
+    }
   }
-
-  //   @ApiCookieAuth('connect.sid')
-  //   @ApiOperation({ summary: '로그아웃' })
-  //   // @UseGuards(LoggedInGuard)
-  //   @Post('logout')
-  //   async logout(@Response() res) {
-  //     res.clearCookie('connect.sid', { httpOnly: true });
-  //     return res.send('ok');
-  //   }
 }

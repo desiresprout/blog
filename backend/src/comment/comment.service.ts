@@ -8,14 +8,10 @@ import { User, Comment } from '@prisma/client';
 export class CommentService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getCommentCount(postID: number): Promise<number | 0> {
-    return this.prisma.comment.count({
-      // where: { postId: postID },
-      where: {
-        postId: {
-          in: [postID],
-        },
-      },
+  async getComments(postID: string, cursor?: string) {
+    return this.prisma.comment.findMany({
+      where: { postId: Number(postID) },
+      take: 20,
     });
 
     // const queryRunner = this.connection.createQueryRunner();

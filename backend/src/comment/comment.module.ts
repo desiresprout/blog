@@ -9,4 +9,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   exports: [CommentService],
   controllers: [CommentController],
 })
-export class UsersModule {}
+export class CommentModule {}
