@@ -5,12 +5,12 @@ model Comment {
   is_private Boolean @default(false)
   is_deleted Boolean @default(false)
   created_at DateTime @default(now())
+  parentId Int @default(null)
   postId Int
   post Post @relation(fields: [postId], references: [id])
   userId Int
   user User @relation(fields: [userId], references: [id])
+
+  @@index([created_at])
+
 }
-
-
-// @@index([id])
-// depth 0은 댓글 1은 대댓글

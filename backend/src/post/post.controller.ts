@@ -3,8 +3,9 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PostsRequestDto } from './dto/posts.request.dto';
 import { PostService } from './post.service';
 import { CommentService } from '../comment/comment.service';
-import { PostSerializer } from '../serializers/post.serializer';
 import modelSerializer from '../serializers/model.serializer';
+import { PostSerializer } from '../serializers/post.serializer';
+import { CommentSerializer } from '../serializers/comment.serializer';
 
 @ApiTags('포스트')
 @Controller('')
@@ -32,13 +33,15 @@ export class PostController {
 
     const comments = await this.commentService.getComments(postID);
 
-    console.log('comments', comments);
-
     const postSerialized = modelSerializer(post, PostSerializer);
+
+    const commentsSerialized = modelSerializer(comments, CommentSerializer);
 
     if (!post) {
       throw new NotFoundException();
     }
+
+    postSerialized[0].comments = commentsSerialized;
 
     return postSerialized;
   }

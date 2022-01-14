@@ -10,13 +10,17 @@ export class PostSerializer {
 
   @Expose()
   id: number;
-  @Expose() title: string;
-  @Expose() body: string;
+
+  @Expose()
+  title: string;
+
+  @Expose()
+  body: string;
 
   @Expose({ name: 'isDeleted', toPlainOnly: true })
   is_deleted: boolean;
 
-  @Expose({ name: 'isPrivated', toPlainOnly: true })
+  @Expose({ name: 'isPrivate', toPlainOnly: true })
   is_private: boolean;
   @Exclude() userId: number;
 

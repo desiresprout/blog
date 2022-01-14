@@ -8,7 +8,7 @@ import { loadPost } from '../api/posts';
 import { useRouter } from 'next/router';
 import IPost from '../../types/interface/post';
 
-const UserPosts = () => {
+const UserPost = () => {
   const router = useRouter();
   const { id: postID } = router.query;
 
@@ -25,6 +25,15 @@ const UserPosts = () => {
       <div>포스트 작성날짜 : {post.created_at}</div>
       <div>작성자 : {post.user.id}</div>
       <div>댓글 갯수 : {post.commentsCount}</div>
+      <div>
+        {post.comments.map((comment) => (
+          <Fragment>
+            <div>댓글 내용 : {comment.comment}</div>
+            <div>댓글 작성일 : {comment.created_at}</div>
+            {comment.isPrivate ? <div>프라이빗</div> : null}
+          </Fragment>
+        ))}
+      </div>
     </Fragment>
   ));
 };
@@ -51,4 +60,4 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   };
 };
 
-export default UserPosts;
+export default UserPost;
