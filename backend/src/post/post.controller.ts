@@ -6,6 +6,9 @@ import { CommentService } from '../comment/comment.service';
 import modelSerializer from '../serializers/model.serializer';
 import { PostSerializer } from '../serializers/post.serializer';
 import { CommentSerializer } from '../serializers/comment.serializer';
+import prismaClient from '@prisma/client';
+
+type Comment = prismaClient.Comment & { replyCount?: number };
 
 @ApiTags('포스트')
 @Controller('')
@@ -31,7 +34,24 @@ export class PostController {
   async post(@Query('postID') postID: string, @Query('cursor') cursor?: string) {
     const post = await this.postService.getPost(postID, cursor);
 
-    const comments = await this.commentService.getComments(postID);
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const comments: Comment[] = await this.commentService.getComments(postID);
+
+    const commentIDs = comments?.map((comment) => comment.id);
+
+    const subCommentCounts = await this.commentService.getSubCommentsCount(commentIDs);
+
+    comments.forEach((comment) => {
+      const subCommentCount = subCommentCounts.find((v) => v.parentId === comment.id);
+      if (subCommentCount) {
+        comment.replyCount = subCommentCount._count;
+        return;
+      }
+      comment.replyCount = 0;
+    });
 
     const postSerialized = modelSerializer(post, PostSerializer);
 

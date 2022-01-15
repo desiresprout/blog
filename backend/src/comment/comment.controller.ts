@@ -1,5 +1,5 @@
 import { Query, Controller, Get, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 
 @ApiTags('COMMENT')
@@ -19,5 +19,14 @@ export class CommentController {
     } else {
       throw new NotFoundException();
     }
+  }
+
+  @ApiOperation({ summary: '대댓글' })
+  @Get()
+  async getSubComments(@Query('parentID') parentID: string) {
+    if (!parentID) {
+      throw new ForbiddenException();
+    }
+    return await this.commentService.getSubComments(parentID);
   }
 }
