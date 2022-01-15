@@ -18,7 +18,7 @@ const UserPost = () => {
 
   console.log('singlePost', singlePost);
 
-  return singlePost!.map((post) => (
+  return singlePost?.map((post) => (
     <Fragment>
       <div>포스트 ID : {post.id}</div>
       <div>포스트 내용 : {post.body}</div>
@@ -26,7 +26,7 @@ const UserPost = () => {
       <div>작성자 : {post.user.id}</div>
       <div>댓글 갯수 : {post.commentsCount}</div>
       <div>
-        {post.comments.map((comment) => (
+        {post.comments?.map((comment) => (
           <Fragment>
             <div>댓글 내용 : {comment.comment}</div>
             <div>댓글 작성일 : {comment.created_at}</div>
