@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "generate-schema": "rimraf prisma/* && cat src/*/*.prisma > prisma/schema.prisma",
     "generate": "npx prisma generate --schema prisma/schema.prisma",
-    "migrate": "npm run generate-schema && npx prisma migrate dev --preview-feature --name backend && npm run generate",
+    "migrate": "npm run generate-schema && npx prisma format && npx prisma migrate dev --preview-feature --name backend && npm run generate",
     "seed": "npx prisma db seed"
   },
   "prisma": {
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.5",
@@ -36,6 +37,8 @@
     "class-transformer": "^0.5.1",
     "cookie-parser": "^1.4.6",
     "dayjs": "^1.10.7",
+    "dotenv": "^10.0.0",
+    "ioredis": "^4.28.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",

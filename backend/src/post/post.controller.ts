@@ -2,6 +2,7 @@ import { Controller, NotFoundException, Get, Query, Response, ForbiddenException
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PostsRequestDto } from './dto/posts.request.dto';
 import { PostService } from './post.service';
+import { CacheService } from '../cache/cache.service';
 import { CommentService } from '../comment/comment.service';
 import modelSerializer from '../serializers/model.serializer';
 import { PostSerializer } from '../serializers/post.serializer';
@@ -13,7 +14,11 @@ type Comment = prismaClient.Comment & { replyCount?: number };
 @ApiTags('포스트')
 @Controller('')
 export class PostController {
-  constructor(private postService: PostService, private readonly commentService: CommentService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly commentService: CommentService,
+    private readonly cache: CacheService
+  ) {}
 
   @ApiOperation({ summary: '포스트들' })
   @Get('posts')
