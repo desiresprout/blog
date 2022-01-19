@@ -7,7 +7,7 @@ import ConnectionOptions from './cache.interface';
 export class CacheModule {
   static forRoot(options: ConnectionOptions): DynamicModule {
     const connectionProvider: Provider = {
-      provide: 'connectionToken',
+      provide: 'connection',
       useValue: new Redis(Number(options.port), options.host),
     };
 
