@@ -2,8 +2,8 @@ import { Query, Controller, Get, NotFoundException, ForbiddenException } from '@
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 
-@ApiTags('COMMENT')
-@Controller('api/comments')
+@ApiTags('댓글')
+@Controller('comments')
 export class CommentController {
   constructor(private commentService: CommentService) {}
 
