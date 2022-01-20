@@ -11,7 +11,6 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: {
         email,
-        password,
       },
     });
 
@@ -19,7 +18,7 @@ export class AuthService {
       return null;
     }
 
-    const result = await bcrypt.compare(email, user.password);
+    const result = await bcrypt.compare(password, user.password);
 
     if (!result) {
       return null;
