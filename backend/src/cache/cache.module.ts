@@ -1,5 +1,6 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { CacheService } from './cache.service';
+import { SessionService } from './session.service';
 import * as Redis from 'ioredis';
 import ConnectionOptions from './cache.interface';
 
@@ -13,8 +14,8 @@ export class CacheModule {
 
     return {
       module: CacheModule,
-      providers: [connectionProvider, CacheService],
-      exports: [CacheService],
+      providers: [connectionProvider, CacheService, SessionService],
+      exports: [CacheService, SessionService],
     };
   }
 }
