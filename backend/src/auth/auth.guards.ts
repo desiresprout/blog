@@ -5,9 +5,11 @@ export class LoginAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const { sid } = request.cookies;
+    const { sid } = request?.signedCookies;
 
-    if (!sid) {
+    const { deviceID } = request?.cookies;
+
+    if (!sid || !deviceID) {
       return false;
     }
 
