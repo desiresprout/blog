@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Body, Req, Res, Controller, Post, Get, ForbiddenException, UseGuards } from '@nestjs/common';
+import { Body, Req, Res, Controller, Post, Get, ForbiddenException, UseGuards, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './user.service';
@@ -67,7 +67,7 @@ export class UserController {
   @UseGuards(LoginAuthGuard)
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response, @Req() req) {
+  async logout(@Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const deviceID = req?.cookies.deviceID;
     const sID = req?.signedCookies.sid;
 
@@ -78,6 +78,22 @@ export class UserController {
     await this.sessionService.clearSession(sID, deviceID);
     res.clearCookie('sid');
     res.clearCookie('deviceID');
+
+    return 'ok';
+  }
+
+  @UseGuards(LoginAuthGuard)
+  @ApiOperation({ summary: '특정 기기 로그아웃' })
+  @Post('logout')
+  async deviceLogout(@Req() req: Request, @Query('deviceID') id: string) {
+    const deviceID = req?.cookies.deviceID;
+    const sID = req?.signedCookies.sid;
+
+    if (!deviceID || !sID || id !== deviceID) {
+      throw new ForbiddenException();
+    }
+
+    await this.sessionService.clearSession(sID, deviceID);
 
     return 'ok';
   }
