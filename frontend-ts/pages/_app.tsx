@@ -1,6 +1,5 @@
 import { AppProps } from 'next/app';
 import { useRef } from 'react';
-import '../styles/globals.css';
 import Head from 'next/head';
 import { QueryClient, QueryClientProvider, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
