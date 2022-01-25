@@ -21,8 +21,13 @@ class MyDocument extends Document {
               box-sizing: border-box;
               padding: 0;
               margin: 0;
+              font-size: 10px;
+            }
+            html {
+              height: 100%;
             }
             body {
+              height: 100%;
               background-color: rgb(248, 249, 250);
             }
           `}
