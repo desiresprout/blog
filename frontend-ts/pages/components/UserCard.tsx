@@ -19,7 +19,8 @@ const UserCard = ({}) => {
           content: '';
           position: absolute;
           bottom: 0;
-          width: 80%;
+          left: 0;
+          width: 100%;
           border: 1px solid #f0f0f3;
         }
 
