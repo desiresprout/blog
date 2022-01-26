@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { GetStaticPropsContext } from 'next';
 import { css } from '@emotion/react';
 import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
@@ -7,7 +6,8 @@ import { HTTPError } from 'ky';
 import { useIntersect } from '../hooks/useIntersect';
 import IPost from '../types/interface/post';
 import PostCard from './components/PostCard';
-
+import UserCard from './components/UserCard';
+import media from '../lib/mediaQuery';
 const Recent = () => {
   const { data, isLoading, fetchNextPage } = useInfiniteQuery<
     IPost[],
@@ -39,15 +39,23 @@ const Recent = () => {
   return (
     <div
       css={css`
-        display: flex;
+        display: inline-block;
+        border: 1px solid red;
+        ${media.xlarge} {
+          width: 38.7rem;
+        }
+        height: 1021px;
       `}
     >
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
+      <UserCard />
+      <div>
+        <PostCard />
+        <PostCard />
+        <PostCard />
+        <PostCard />
+        <PostCard />
+        <PostCard />
+      </div>
     </div>
   );
 
