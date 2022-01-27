@@ -8,88 +8,67 @@ import IPost from '../types/interface/post';
 import PostCard from './components/PostCard';
 import UserCard from './components/UserCard';
 import media from '../lib/mediaQuery';
+import { Fragment } from 'react';
+
 const Recent = () => {
-  const { data, isLoading, fetchNextPage } = useInfiniteQuery<
-    IPost[],
-    HTTPError
-  >(
+  const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPost[], HTTPError>(
     'recentPosts',
-    ({ pageParam = '0' }) => {
+    ({ pageParam = '' }) => {
       return loadPosts(pageParam);
     },
     {
       getNextPageParam: (lastPage) => {
         return lastPage?.[lastPage.length - 1]?.id;
       },
-    },
+    }
   );
 
-  const [setRef] = useIntersect(async (entry, observer) => {
-    observer.unobserve(entry.target);
-    await fetchNextPage();
-    observer.observe(entry.target);
-  }, {});
+  const recentPosts = data?.pages.flat();
+  const isEmpty = data?.pages[0]?.length === 0;
+  const isReachingEnd = isEmpty || (data && data.pages[data.pages.length - 1]?.length < 10);
+  const hasMorePosts = !isEmpty && !isReachingEnd;
+  const readToLoad = hasMorePosts && !isLoading;
 
-  const recentPosts = data?.pages?.flat() || [];
+  const [setRef] = useIntersect(fetchNextPage);
 
   if (isLoading) {
     return <div>로딩 중......</div>;
   }
 
   return (
-    <div
-      css={css`
-        display: inline-block;
-        border: 1px solid red;
-        background: #ffffff;
-        ${media.xlarge} {
-          width: 38.7rem;
-        }
-        height: 1021px;
-      `}
-    >
-      <UserCard />
-      <div>
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
+    <Fragment>
+      <div
+        css={css`
+          display: inline-block;
+          border: 1px solid red;
+          background: #ffffff;
+          ${media.xlarge} {
+            width: 38.7rem;
+          }
+        `}
+      >
+        <UserCard />
+        <div>
+          {recentPosts?.map((post) => {
+            return <PostCard key={post.key} post={post} />;
+          })}
+        </div>
       </div>
-    </div>
+      <div
+        ref={readToLoad ? setRef : undefined}
+        css={css`
+          border: 1px solid green;
+          height: 1px;
+        `}
+      />
+    </Fragment>
   );
-
-  // return recentPosts.map((v) => (
-  //   <div
-  //     key={v.key}
-  //     ref={setRef}
-  //     css={css`
-  //       display: flex;
-  //       flex-direction: column;
-  //       justify-content: center;
-  //       align-items: center;
-  //       gap: 10px;
-  //       border: 1px solid bisque;
-  //     `}
-  //   >
-  //     <div>유저 이메일 : {v.user.email}</div>
-  //     <div>유저 ID : {v.user.id}</div>
-  //     <div>포스트 ID : {v.id}</div>
-  //     <div>포스트 제목 : {v.title}</div>
-  //     <div>포스트 내용 : {v.body}</div>
-  //     <div>댓글 갯수 : {v.commentsCount}</div>
-  //     <div>날짜 {v.created_at}</div>
-  //     <div>삭제여부 : {v.isDeleted ? '삭제' : '미삭제'}</div>
-  //     <div>Private여부 : {v.isPrivate ? '비공개' : '공개'}</div>
-  //   </div>
-  // ));
 };
 
 export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery('recentPosts', () => loadPosts('0'));
+  await queryClient.prefetchInfiniteQuery('recentPosts', () => loadPosts());
 
   return {
     props: {
