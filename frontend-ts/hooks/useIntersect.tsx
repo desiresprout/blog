@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const baseOption = {
   root: null,
@@ -6,61 +6,29 @@ const baseOption = {
   rootMargin: '0px',
 };
 
-type TInterSection = (
-  entry: IntersectionObserverEntry,
-  observer: IntersectionObserver,
-) => void;
-
-const useIntersect = (
-  onIntersect: TInterSection,
-  option: IntersectionObserverInit,
-) => {
+const useIntersect = (callback: any, option?: IntersectionObserverInit) => {
   const [ref, setRef] = useState<HTMLElement | null>(null);
+  const observer = useRef<IntersectionObserver>();
 
-  // : Dispatch(SetStateAction<>)
-
-  // const checkIntersect = useCallback(
-  //   ([entry], observer) =>  {
-  //     console.log('entry', entry);
-  //     // if (entry.isIntersecting) {
-  //     //   onIntersect(entry, observer);
-  //     // }
-  //   },
-  //   [],
-  // );
-
-  // const checkIntersect = (
-  //   [entry]: IntersectionObserverEntry,
-  //   observer: IntersectionObserver,
-  // ) => {
-  //   console.log('entrya', entry);
-  //   if (entry[0].isIntersecting) {
-  //     onIntersect(entry[0], observer);
-  //   }
-  // };
-  useEffect(() => {
-    let observer: IntersectionObserver;
-    if (ref) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            onIntersect(entry, observer);
-          }
-        },
-        {
-          ...baseOption,
-          ...option,
-        },
-      );
-
-      // observer = new IntersectionObserver(checkIntersect, {
-      //   ...baseOption,
-      //   ...option,
-      // });
-      observer.observe(ref);
+  const updateEntry = async ([entry]: IntersectionObserverEntry[]) => {
+    if (entry.isIntersecting) {
+      observer.current?.unobserve(entry.target);
+      await callback();
+      observer.current?.observe(entry.target);
     }
-    return () => observer && observer.disconnect();
-  }, [ref, option.root, option.threshold, option.rootMargin]);
+  };
+
+  useEffect(() => {
+    if (ref) {
+      observer.current = new IntersectionObserver(updateEntry, {
+        ...baseOption,
+        ...option,
+      });
+
+      observer.current.observe(ref);
+    }
+    return () => observer && observer.current?.disconnect();
+  }, [ref, option?.root, option?.threshold, option?.rootMargin]);
   return [setRef];
 };
 
