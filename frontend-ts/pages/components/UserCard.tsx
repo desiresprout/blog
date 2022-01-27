@@ -36,7 +36,7 @@ const UserCard = ({}) => {
             display: flex;
             flex-direction: column;
 
-            & :first-child {
+            & :first-of-type {
               font-size: 2.4rem;
             }
           }
