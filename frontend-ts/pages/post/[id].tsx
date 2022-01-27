@@ -12,8 +12,8 @@ const UserPost = () => {
   const router = useRouter();
   const { id: postID } = router.query;
 
-  const { data: singlePost } = useQuery<IPost>(['loadPost', postID], () =>
-    loadPost(postID),
+  const { data: singlePost } = useQuery<IPost, HTTPError>(['loadPost', postID], () =>
+    loadPost(postID as string)
   );
 
   console.log('singlePost', singlePost);
