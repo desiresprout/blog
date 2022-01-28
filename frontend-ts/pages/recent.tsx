@@ -1,6 +1,6 @@
 import { GetStaticPropsContext } from 'next';
 import { css } from '@emotion/react';
-import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
+import { QueryClient, dehydrate, useInfiniteQuery, InfiniteQueryObserverResult } from 'react-query';
 import { loadPosts } from './api/posts';
 import { HTTPError } from 'ky';
 import { useIntersect } from '../hooks/useIntersect';
@@ -29,7 +29,7 @@ const Recent = () => {
   const hasMorePosts = !isEmpty && !isReachingEnd;
   const readToLoad = hasMorePosts && !isLoading;
 
-  const [setRef] = useIntersect(fetchNextPage);
+  const [setRef] = useIntersect<InfiniteQueryObserverResult<IPost[], HTTPError>>(fetchNextPage);
 
   if (isLoading) {
     return <div>로딩 중......</div>;

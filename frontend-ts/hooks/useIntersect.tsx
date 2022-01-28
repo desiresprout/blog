@@ -1,12 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
-const baseOption = {
-  root: null,
-  threshold: 0.5,
-  rootMargin: '0px',
-};
-
-const useIntersect = (callback: any, option?: IntersectionObserverInit) => {
+const useIntersect = <T extends unknown>(
+  callback: () => Promise<T>,
+  option?: IntersectionObserverInit
+) => {
   const [ref, setRef] = useState<HTMLElement | null>(null);
   const observer = useRef<IntersectionObserver>();
 
@@ -21,7 +18,6 @@ const useIntersect = (callback: any, option?: IntersectionObserverInit) => {
   useEffect(() => {
     if (ref) {
       observer.current = new IntersectionObserver(updateEntry, {
-        ...baseOption,
         ...option,
       });
 
