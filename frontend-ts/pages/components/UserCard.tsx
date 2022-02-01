@@ -5,6 +5,12 @@ import { AiOutlinePushpin } from 'react-icons/Ai';
 import { AiFillPushpin } from 'react-icons/Ai';
 
 const UserCard = ({}) => {
+  const [isPinned, setPinned] = useState(true);
+
+  const onToggle = useCallback(() => {
+    setPinned(!isPinned);
+  }, [isPinned]);
+
   return (
     <div
       css={css`
@@ -13,7 +19,16 @@ const UserCard = ({}) => {
         justify-content: space-between;
         align-items: center;
         height: 8.4rem;
-        position: relative;
+
+        ${isPinned &&
+        css`
+          position: sticky;
+          top: 0;
+
+          svg {
+            color: white;
+          }
+        `}
 
         &:after {
           content: '';
@@ -41,6 +56,14 @@ const UserCard = ({}) => {
             }
           }
         }
+
+        button {
+          background: transparent;
+          border: 1px solid transparent;
+          svg {
+            color: #5e81f4;
+          }
+        }
       `}
     >
       <div>
@@ -50,8 +73,7 @@ const UserCard = ({}) => {
           <span>유저이름</span>
         </div>
       </div>
-
-      <AiFillPushpin />
+      <button onClick={onToggle}>{isPinned ? <AiFillPushpin /> : <AiOutlinePushpin />}</button>
     </div>
   );
 };
