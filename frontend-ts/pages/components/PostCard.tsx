@@ -1,4 +1,4 @@
-import React, { useState, useCallback, VFC } from 'react';
+import React, { useState, useCallback, VFC, memo } from 'react';
 import { BiUserCircle } from 'react-icons/bi';
 import { css } from '@emotion/react';
 import dayjs from 'dayjs';
@@ -6,7 +6,7 @@ import IPost from '../../types/interface/post';
 
 dayjs.locale('ko');
 
-const PostCard: VFC<{ post: IPost }> = ({ post }) => {
+const PostCard: VFC<{ post: IPost }> = memo(({ post }) => {
   return (
     <div
       css={css`
@@ -21,7 +21,7 @@ const PostCard: VFC<{ post: IPost }> = ({ post }) => {
 
         & > div {
           display: flex;
-          background: rgba(245, 245, 250, 0.4);
+          background: rgba(245, 245, 250, 0.8);
           border-radius: 1.2rem;
 
           div {
@@ -80,6 +80,6 @@ const PostCard: VFC<{ post: IPost }> = ({ post }) => {
       </div>
     </div>
   );
-};
+});
 
 export default PostCard;
