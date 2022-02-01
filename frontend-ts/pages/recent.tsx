@@ -40,7 +40,6 @@ const Recent = () => {
       <div
         css={css`
           display: inline-block;
-          border: 1px solid red;
           background: #ffffff;
           ${media.xlarge} {
             width: 38.7rem;
