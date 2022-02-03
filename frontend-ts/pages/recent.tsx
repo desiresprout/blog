@@ -1,14 +1,15 @@
+import { Fragment } from 'react';
 import { GetStaticPropsContext } from 'next';
 import { css } from '@emotion/react';
 import { QueryClient, dehydrate, useInfiniteQuery, InfiniteQueryObserverResult } from 'react-query';
 import { loadPosts } from './api/posts';
 import { HTTPError } from 'ky';
+import useVirtual from 'react-cool-virtual';
 import { useIntersect } from '../hooks/useIntersect';
 import IPost from '../types/interface/post';
 import PostCard from './components/PostCard';
 import UserCard from './components/UserCard';
 import media from '../lib/mediaQuery';
-import { Fragment } from 'react';
 
 const Recent = () => {
   const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPost[], HTTPError>(
@@ -25,11 +26,14 @@ const Recent = () => {
 
   const recentPosts = data?.pages.flat();
   const isEmpty = data?.pages[0]?.length === 0;
-  const isReachingEnd = isEmpty || (data && data.pages[data.pages.length - 1]?.length < 10);
-  const hasMorePosts = !isEmpty && !isReachingEnd;
-  const readToLoad = hasMorePosts && !isLoading;
+  const isReachBottom = isEmpty || (data && data.pages[data.pages.length - 1]?.length < 10);
+  const isMoreRead = !isEmpty && !isReachBottom && !isLoading;
 
   const [setRef] = useIntersect<InfiniteQueryObserverResult<IPost[], HTTPError>>(fetchNextPage);
+
+  const { outerRef, innerRef, items } = useVirtual<HTMLDivElement, HTMLDivElement>({
+    itemCount: recentPosts?.length || 0,
+  });
 
   if (isLoading) {
     return <div>로딩 중......</div>;
@@ -44,22 +48,25 @@ const Recent = () => {
           ${media.xlarge} {
             width: 38.7rem;
           }
+
+          & .post-wrapper {
+            height: 100vh;
+            overflow: auto;
+          }
         `}
       >
         <UserCard />
-        <div>
-          {recentPosts?.map((post) => {
-            return <PostCard key={post.key} post={post} />;
-          })}
+        <div ref={recentPosts ? outerRef : undefined} className="post-wrapper">
+          <div ref={recentPosts ? innerRef : undefined}>
+            {items.map(({ index, measureRef }) => {
+              const post = recentPosts![index];
+
+              return <PostCard ref={measureRef} key={post.key} post={post} />;
+            })}
+          </div>
+          <div ref={isMoreRead ? setRef : undefined} />
         </div>
       </div>
-      <div
-        ref={readToLoad ? setRef : undefined}
-        css={css`
-          border: 1px solid green;
-          height: 1px;
-        `}
-      />
     </Fragment>
   );
 };
