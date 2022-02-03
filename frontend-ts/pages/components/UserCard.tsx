@@ -19,12 +19,12 @@ const UserCard = ({}) => {
         justify-content: space-between;
         align-items: center;
         height: 8.4rem;
+        position: sticky;
+        top: 0;
+        background: white;
 
         ${isPinned &&
         css`
-          position: sticky;
-          top: 0;
-
           svg {
             color: white;
           }
