@@ -2,14 +2,16 @@ import { Fragment } from 'react';
 import { GetStaticPropsContext } from 'next';
 import { css } from '@emotion/react';
 import { QueryClient, dehydrate, useInfiniteQuery, InfiniteQueryObserverResult } from 'react-query';
-import { loadPosts } from './api/posts';
+import { loadPosts } from '@api/posts';
 import { HTTPError } from 'ky';
 import useVirtual from 'react-cool-virtual';
-import { useIntersect } from '../hooks/useIntersect';
-import IPost from '../types/interface/post';
-import PostCard from './components/PostCard';
-import UserCard from './components/UserCard';
-import media from '../lib/mediaQuery';
+import { useIntersect } from '@hooks/useIntersect';
+import IPost from '@typing/interface/post';
+import PostCard from '@components/PostCard';
+import UserCard from '@components/UserCard';
+import CommentTemplate from '@components/comment/CommentTemplate';
+import Comment from '@components/comment/Comment';
+import media from '@lib/mediaQuery';
 
 const Recent = () => {
   const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPost[], HTTPError>(
@@ -40,10 +42,13 @@ const Recent = () => {
   }
 
   return (
-    <Fragment>
+    <div
+      css={css`
+        display: flex;
+      `}
+    >
       <div
         css={css`
-          display: inline-block;
           background: #ffffff;
           ${media.xlarge} {
             width: 38.7rem;
@@ -67,7 +72,10 @@ const Recent = () => {
           <div ref={isMoreRead ? setRef : undefined} />
         </div>
       </div>
-    </Fragment>
+      <CommentTemplate>
+        <Comment />
+      </CommentTemplate>
+    </div>
   );
 };
 
