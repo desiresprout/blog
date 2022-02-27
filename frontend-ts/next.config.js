@@ -1,5 +1,4 @@
 const path = require('path');
-const { config } = require('process');
 
 module.exports = {
   reactStrictMode: false,
@@ -12,7 +11,9 @@ module.exports = {
       '@hooks': path.resolve(__dirname, 'hooks'),
       '@components': path.resolve(__dirname, 'components'),
       '@pages': path.resolve(__dirname, 'pages'),
-      '@util': path.resolve(__dirname, 'util'),
+      '@lib': path.resolve(__dirname, 'lib'),
+      '@typing': path.resolve(__dirname, 'typing'),
+      '@api': path.resolve(__dirname, 'pages/api'),
     };
 
     return {

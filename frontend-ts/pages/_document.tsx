@@ -1,10 +1,4 @@
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-} from 'next/document';
+import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 import { css, Global } from '@emotion/react';
 
 class MyDocument extends Document {
@@ -16,10 +10,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          href="https://fonts.googleapis.com/earlyaccess/notosanskr.css"
-          rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet" />
         <Head />
         <Global
           styles={css`
@@ -28,13 +19,13 @@ class MyDocument extends Document {
               padding: 0;
               margin: 0;
               font-size: 10px;
+              font-family: notosanskr;
             }
             html {
               height: 100%;
             }
             body {
               height: 100%;
-              background-color: rgb(248, 249, 250);
             }
           `}
         />

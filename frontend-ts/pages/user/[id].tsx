@@ -2,19 +2,16 @@ import { GetStaticPropsContext } from 'next';
 import { css } from '@emotion/react';
 import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
 import { HTTPError } from 'ky';
-import { loadPosts } from '../api/posts';
+import { loadPosts } from '@api/posts';
 import { useRouter } from 'next/router';
-import { useIntersect } from '../../hooks/useIntersect';
-import IPost from '../../types/interface/post';
+import { useIntersect } from '@hooks/useIntersect';
+import IPost from '@typing/interface/post';
 
 const UserPosts = () => {
   const router = useRouter();
   const { id: userID } = router.query;
 
-  const { data, isLoading, fetchNextPage } = useInfiniteQuery<
-    IPost[],
-    HTTPError
-  >(
+  const { data, isLoading, fetchNextPage } = useInfiniteQuery<IPost[], HTTPError>(
     ['userPosts', userID],
     ({ pageParam = 0 }) => {
       return loadPosts(pageParam, userID as string);
@@ -23,7 +20,7 @@ const UserPosts = () => {
       getNextPageParam: (lastPage) => {
         return lastPage?.[lastPage.length - 1]?.id;
       },
-    },
+    }
   );
 
   const [setRef] = useIntersect(async (entry, observer) => {
@@ -77,9 +74,7 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
     };
   }
 
-  await queryClient.prefetchQuery(['userPosts', userID], () =>
-    loadPosts('0', userID),
-  );
+  await queryClient.prefetchQuery(['userPosts', userID], () => loadPosts('0', userID));
 
   return {
     props: {

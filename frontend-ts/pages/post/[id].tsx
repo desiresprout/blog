@@ -4,9 +4,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { css } from '@emotion/react';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { HTTPError } from 'ky';
-import { loadPost } from '../api/posts';
+import { loadPost } from '@api/posts';
 import { useRouter } from 'next/router';
-import IPost from '../../types/interface/post';
+import IPost from '@typing/interface/post';
 
 const UserPost = () => {
   const router = useRouter();
