@@ -2,7 +2,7 @@ import React, { useState, useCallback, VFC, memo, forwardRef, ForwardedRef } fro
 import { BiUserCircle } from 'react-icons/bi';
 import { css } from '@emotion/react';
 import dayjs from 'dayjs';
-import IPost from '../../types/interface/post';
+import IPost from '@typing/interface/post';
 
 dayjs.locale('ko');
 
